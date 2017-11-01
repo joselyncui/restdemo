@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script type="text/javascript" src="source/js/jquery-3.2.1.min.js"></script>
+<script type="text/javascript">
+	$(document).ready(function(){
+		user = (id = '111', age=18, name='cuiyao') => {
+			return {"id":id, "age": age, "name": name};
+		}
+		
+		$(document).delegate('#btn-add-user','click', ()=>{
+			$('#result').text("");
+			addUser();
+		});
+		
+		addUser = (info = user())=> {
+			$.ajax({
+				url:'rest/user/addUser',
+				type:'POST',	
+				contentType:'application/json',
+				dataType:'json',
+				data:JSON.stringify(info)
+			}).done((resp)=> {
+				$('#result').append(JSON.stringify(resp));
+			}).fail((error)=> {
+				console.log(error);
+			});
+		}
+		
+		let users = {};
+		users['1'] = user(1,'1','1');
+		users['2'] = user(2,'2','2');
+		
+		$(document).delegate("#btn-update-user", 'click', () => {
+			updateUser();
+		});
+		
+		updateUser= ()=> {
+			$.ajax({
+				url:"rest/user/updateUser",
+				type:'POST',
+				contentType:'application/json',
+				dataType:'json',
+				data:JSON.stringify(users),
+			}).done((resp)=>{
+				$('#result').text(JSON.stringify(resp));
+			}).fail( (error) => {
+				console.log(error);
+			});
+		}
+		
+		$("#btn-get-string").on('click',() => {
+			$.ajax({
+				url:'rest/user',
+				type:'GET',
+				dataType:'html',
+			}).done((resp) => {
+				$('#result').text(resp);
+			});
+		});
+		
+		$("#post-mulity").on('click',() => {
+			for(let i = 0; i < 100; i++) {
+				addUser(user(i));
+			}
+			
+		});
+	});
+</script>
+</head>
+<body>
+<input type='button' value='add user' id='btn-add-user'/>
+<input type='button' value='update user' id='btn-update-user'/>
+<input type='button' value='get as string' id = 'btn-get-string'/>
+<input type='button' value='post mulity' id='post-mulity'/>
+
+<form action='rest/user/login2' method="post">
+	<input type='text'name='name' required="required"/>
+	<input type='text' name = 'password' required="required"/>
+	<input type='submit' value='submit'/>
+</form>
+
+<form action='rest/user/upload' method="post" enctype="multipart/form-data">
+<input type='file' value='upload1' name='image' multiple="multiple"/>
+<input type='submit' value='submit'/>
+</form>
+
+<div id='result'>
+
+</div>
+</body>
+</html>
