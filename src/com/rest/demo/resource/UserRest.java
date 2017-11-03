@@ -13,6 +13,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -27,7 +28,7 @@ import com.rest.demo.entity.User;
 import util.FileUtil;
 
 
-@Path("/user")
+@Path("/api")
 public class UserRest {
 	
 	@GET
@@ -36,11 +37,11 @@ public class UserRest {
 		MultivaluedMap<String, String> queryParams = ui.getQueryParameters();
 		MultivaluedMap<String, String> pathPatams = ui.getPathParameters();
 		for(String key : queryParams.keySet()) {
-			System.out.println(key +"  " + queryParams.get(key));
+			System.out.println(key +"  " + queryParams.getFirst(key));
 		}
 		
 		for(String key : pathPatams.keySet()) {
-			System.out.println(key +"  " + pathPatams.get(key));
+			System.out.println(key +"  " + pathPatams.getFirst(key));
 		}
 		return "success";
 	}
@@ -84,7 +85,7 @@ public class UserRest {
 	
 	
 	@GET
-	@Path("/getUser/{id}")
+	@Path("/user/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public User getUser(@PathParam("id") String id, @QueryParam("name") String name) {
 		User user = new User(id, 18, name);
@@ -92,7 +93,7 @@ public class UserRest {
 	}
 	
 	@GET
-	@Path("/getUsers")
+	@Path("/users")
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<User> getUsers(){
 		List<User> users = new ArrayList<User>();
@@ -106,7 +107,7 @@ public class UserRest {
 	}
 	
 	@GET
-	@Path("getMap")
+	@Path("map")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Map<String, User> getMap(){
 		Map<String, User> map = new HashMap<String, User>();
@@ -115,7 +116,7 @@ public class UserRest {
 	}
 	
 	@POST
-	@Path("addUser")
+	@Path("user")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public User addUser(User user) {
@@ -123,8 +124,8 @@ public class UserRest {
 		return user;
 	}
 	
-	@POST
-	@Path("updateUser")
+	@PUT
+	@Path("user")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Map<String, User> updateUser(Map<String, User> users) {
@@ -138,7 +139,7 @@ public class UserRest {
 	
 	@POST
 	@Path("upload")
-	@Consumes({MediaType.MULTIPART_FORM_DATA, MediaType.APPLICATION_JSON})
+	@Consumes({MediaType.MULTIPART_FORM_DATA})
 	@Produces({MediaType.APPLICATION_JSON})
 	public List<String>  upload(@Context HttpServletRequest request, @Context HttpServletResponse response) {
 		 String path = "D:"+File.separator+"imgs" + File.separator;
