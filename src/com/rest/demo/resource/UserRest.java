@@ -1,6 +1,7 @@
 package com.rest.demo.resource;
 
 import java.io.File;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -12,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -22,6 +24,9 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriInfo;
+
+import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
+import org.glassfish.jersey.media.multipart.FormDataParam;
 
 import com.rest.demo.entity.User;
 
@@ -80,7 +85,8 @@ public class UserRest {
 	@GET
 	@Produces(MediaType.TEXT_HTML)
 	public String helloWord() {
-		return "hello word";
+//		return "hello word2";
+		throw new NotFoundException();
 	}
 	
 	
@@ -138,7 +144,7 @@ public class UserRest {
 	}
 	
 	@POST
-	@Path("upload")
+	@Path("file")
 	@Consumes({MediaType.MULTIPART_FORM_DATA})
 	@Produces({MediaType.APPLICATION_JSON})
 	public List<String>  upload(@Context HttpServletRequest request, @Context HttpServletResponse response) {
@@ -146,8 +152,15 @@ public class UserRest {
 		  return FileUtil.upload(path, request);
 	}
 	
-	
-	
-	
+	@POST
+    @Path("file2")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    public String upload2(
+            @FormDataParam("file") InputStream input,
+            @FormDataParam("file") FormDataContentDisposition d) {
+		FileUtil.saveFile(input, "D:"+File.separator+"imgs" + File.separator+d.getFileName());
+        return d.getFileName();
+    }
+
 
 }

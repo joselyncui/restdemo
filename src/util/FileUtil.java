@@ -557,4 +557,22 @@ public class FileUtil {
 	}
 	
 	
+	public static void saveFile(InputStream in, String path) {
+		File outFile = new File(path);
+		try {
+			OutputStream out = new FileOutputStream(outFile);
+			int length = 0;
+			byte[] buf = new byte[1024];
+			while ((length = in.read(buf)) != -1) {
+				out.write(buf, 0, length);
+			}
+			in.close();
+			out.close();
+			
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+	}
+	
 }
