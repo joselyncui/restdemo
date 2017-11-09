@@ -11,6 +11,7 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.NotFoundException;
@@ -32,25 +33,24 @@ import com.rest.demo.entity.User;
 
 import util.FileUtil;
 
-
 @Path("/api")
 public class UserRest {
-	
+
 	@GET
 	@Path("{version}")
 	public String get(@Context UriInfo ui) {
 		MultivaluedMap<String, String> queryParams = ui.getQueryParameters();
 		MultivaluedMap<String, String> pathPatams = ui.getPathParameters();
-		for(String key : queryParams.keySet()) {
-			System.out.println(key +"  " + queryParams.getFirst(key));
+		for (String key : queryParams.keySet()) {
+			System.out.println(key + "  " + queryParams.getFirst(key));
 		}
-		
-		for(String key : pathPatams.keySet()) {
-			System.out.println(key +"  " + pathPatams.getFirst(key));
+
+		for (String key : pathPatams.keySet()) {
+			System.out.println(key + "  " + pathPatams.getFirst(key));
 		}
 		return "success";
 	}
-	
+
 	@POST
 	@Path("login")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
@@ -59,10 +59,10 @@ public class UserRest {
 		User user = new User();
 		user.setName(formParams.getFirst("name").toString());
 		user.setPassword(formParams.getFirst("password").toString());
-		
+
 		return user;
 	}
-	
+
 	@Path("login2")
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
@@ -72,24 +72,22 @@ public class UserRest {
 		user.setName(name);
 		user.setPassword(password);
 		return user;
-		
+
 	}
-	
+
 	@GET
 	@Produces(MediaType.TEXT_PLAIN)
 	public String sayHi() {
 		return "say hi";
 	}
-	
-	
+
 	@GET
 	@Produces(MediaType.TEXT_HTML)
 	public String helloWord() {
-//		return "hello word2";
+		// return "hello word2";
 		throw new NotFoundException();
 	}
-	
-	
+
 	@GET
 	@Path("/user/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -97,30 +95,30 @@ public class UserRest {
 		User user = new User(id, 18, name);
 		return user;
 	}
-	
+
 	@GET
 	@Path("/users")
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<User> getUsers(){
+	public List<User> getUsers() {
 		List<User> users = new ArrayList<User>();
-		
-		for(int i = 0; i < 10; i++) {
+
+		for (int i = 0; i < 10; i++) {
 			User user = new User(1, "cuiyao-" + i);
 			users.add(user);
-		} 
-		
+		}
+
 		return users;
 	}
-	
+
 	@GET
 	@Path("map")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Map<String, User> getMap(){
+	public Map<String, User> getMap() {
 		Map<String, User> map = new HashMap<String, User>();
 		map.put("bulity", new User(18, "cuiyao"));
 		return map;
 	}
-	
+
 	@POST
 	@Path("user")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -129,7 +127,16 @@ public class UserRest {
 		System.out.println(user.toString());
 		return user;
 	}
-	
+
+	@POST
+	@Path("user2")
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Produces(MediaType.APPLICATION_JSON)
+	public User addUser(@FormParam("name") @DefaultValue("cui1") String name,
+			@FormParam("age") @DefaultValue("3") int age) {
+		return new User(age, name);
+	}
+
 	@PUT
 	@Path("user")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -137,30 +144,28 @@ public class UserRest {
 	public Map<String, User> updateUser(Map<String, User> users) {
 		System.out.println(users);
 		Set<String> keys = users.keySet();
-		for(String key: keys) {
-			System.out.println(key+"---" + users.get(key).toString());
+		for (String key : keys) {
+			System.out.println(key + "---" + users.get(key).toString());
 		}
 		return users;
 	}
-	
+
 	@POST
 	@Path("file")
-	@Consumes({MediaType.MULTIPART_FORM_DATA})
-	@Produces({MediaType.APPLICATION_JSON})
-	public List<String>  upload(@Context HttpServletRequest request, @Context HttpServletResponse response) {
-		 String path = "D:"+File.separator+"imgs" + File.separator;
-		  return FileUtil.upload(path, request);
+	@Consumes({ MediaType.MULTIPART_FORM_DATA })
+	@Produces({ MediaType.APPLICATION_JSON })
+	public List<String> upload(@Context HttpServletRequest request, @Context HttpServletResponse response) {
+		String path = "D:" + File.separator + "imgs" + File.separator;
+		return FileUtil.upload(path, request);
 	}
-	
-	@POST
-    @Path("file2")
-    @Consumes(MediaType.MULTIPART_FORM_DATA)
-    public String upload2(
-            @FormDataParam("file") InputStream input,
-            @FormDataParam("file") FormDataContentDisposition d) {
-		FileUtil.saveFile(input, "D:"+File.separator+"imgs" + File.separator+d.getFileName());
-        return d.getFileName();
-    }
 
+	@POST
+	@Path("file2")
+	@Consumes(MediaType.MULTIPART_FORM_DATA)
+	public String upload2(@FormDataParam("file") InputStream input,
+			@FormDataParam("file") FormDataContentDisposition d) {
+		FileUtil.saveFile(input, "D:" + File.separator + "imgs" + File.separator + d.getFileName());
+		return d.getFileName();
+	}
 
 }

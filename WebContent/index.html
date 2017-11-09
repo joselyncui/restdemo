@@ -29,6 +29,20 @@
 			});
 		}
 		
+		addUser2 = ()=> {
+			$.ajax({
+				url:'rest/api/user2',
+				type:'POST',
+				data:user(),
+				contentType:'application/x-www-form-urlencoded',
+				dataType:'json',
+			}).done((resp) => {
+				$('#result').append(JSON.stringify(resp));
+			}).fail((error) => {
+				console.log(error);
+			});
+		}
+		
 		let users = {};
 		users['1'] = user(1,'1','1');
 		users['2'] = user(2,'2','2');
@@ -67,11 +81,16 @@
 			}
 			
 		});
+		
+		$("#btn-add-user-2").on('click',() => {
+			addUser2();
+		})
 	});
 </script>
 </head>
 <body>
 <input type='button' value='add user' id='btn-add-user'/>
+<input type='button' value='add user 2' id='btn-add-user-2'/>
 <input type='button' value='update user' id='btn-update-user'/>
 <input type='button' value='get as string' id = 'btn-get-string'/>
 <input type='button' value='post mulity' id='post-mulity'/>
